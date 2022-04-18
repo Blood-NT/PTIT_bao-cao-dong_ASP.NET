@@ -1,0 +1,129 @@
+﻿@*<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/Site.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+</body>
+</html>
+    *@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="~/css/home.css" rel="stylesheet" />
+</head>
+
+<body style=" overflow: auto !important;  display: block !important; min-height: 100vh;">
+    <header>
+        <div class="main">
+            <header id="header">
+                <ul id="head_left">
+                    <li class="left_iteam">Báo cáo động</li>
+                    <li class="left_iteam">@Html.ActionLink("Home", "Index", "Home",null, new { @class = "left_iteam" })</li>
+                    <li class="left_iteam">@Html.ActionLink("About", "About", "Home",null, new { @class = "left_iteam" })</li>
+                    <li class="left_iteam">@Html.ActionLink("Contact", "Contact", "Home",null,new {@class="left_iteam" })</li>
+                </ul>
+                <div id="head_right">
+                    <button class="open_login" onclick="clearmain(1)">Đăng nhập</button>
+                    <button class="open_signup" onclick="clearmain(2)">Đăng ký</button>
+                </div>
+            </header>
+            <!-- modal -->
+            <div class="login" id="loginnnn">
+                <div class="modal_body" style="height: 400px;">
+                    <div class="modal_header">đăng nhập</div>
+                    <div class="input_form">
+                        <div>
+                            <input type="text" id="username" class="inputlog" placeholder="Tài khoản">
+                        </div>
+                        <div>
+                            <input type="password" id="pass" class="inputlog" placeholder="mật khẩu">
+                        </div>
+                        <div class="data_pick_login">
+                            <select name="data" id="pick_database" class="inputlog">
+                                <option value="optionnn"id="optionfirst">data</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="btn_login">
+                        <button id="out_log" onclick="clearmain(3)">Trở lại</button>
+                        <button id="loginn" onclick="clearmain(1)">Đăng nhập</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signup" id="singupppp">
+                <div class="modal_body"style="height : 600px;">
+                    <div class="modal_header">đăng ký</div>
+                    <div class="input_form">
+                        <div>
+                            <input type="text" id="username_sign" class="inputlog" placeholder="Tài khoản">
+                        </div>
+                        <div>
+                            <input type="password" id="pass_sign" class="inputlog" placeholder="mật khẩu">
+                        </div>
+                        <select name="data" id="pick_database" class="inputlog">
+                            <option value="all" id="optionfirst">all_data</option>
+                        </select>
+                        <div>
+                            <input type="text" id="adminnnn" class="inputlog" placeholder="mã xác nhận">
+                        </div>
+                        <p id="noti" style="color:red; "></p>
+                    </div>
+                    <div class="btn_login">
+                        <button id="out_sign" onclick="clearmain(3)">Trở lại</button>
+                        <button id="signupp" onclick="clearmain(2)">Đăng ký</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @RenderBody()
+
+
+</body>
+<script type="text/javascript" src="~/js/main.js"></script>
+
+</html>
