@@ -65,13 +65,14 @@
                     <li class="left_iteam">@Html.ActionLink("Contact", "Contact", "Home",null,new {@class="left_iteam" })</li>
                 </ul>
                 <div id="head_right">
-                    <button class="open_login" onclick="clearmain(1)">Đăng nhập</button>
-                    <button class="open_signup" onclick="clearmain(2)">Đăng ký</button>
+                    <p id="user_name" style="font-size:30px; color:red;"></p>
+                    <button id="btn_login"class="open_login" onclick="clearmain(1)">Đăng nhập</button>
+                    <button id="btn_sigin"class="open_signup" onclick="clearmain(2)">Đăng ký</button>
                 </div>
             </header>
             <!-- modal -->
             <div class="login" id="loginnnn">
-                <div class="modal_body" style="height: 400px;">
+                <div class="modal_body" id="login_done" style="height: 400px;">
                     <div class="modal_header">đăng nhập</div>
                     <div class="input_form">
                         <div>
@@ -81,14 +82,15 @@
                             <input type="password" id="pass" class="inputlog" placeholder="mật khẩu">
                         </div>
                         <div class="data_pick_login">
-                            <select name="data" id="pick_database" class="inputlog">
-                                <option value="optionnn"id="optionfirst">data</option>
+                            <select name="data" id="pick_database" class="inputlog" onchange="database_selec_click(this)">
+                                <option value="defaultt"id="optionfirst">data</option>
                             </select>
                         </div>
                     </div>
+                    <p id="noti" style="font-size:20px;color:red;"></p>
                     <div class="btn_login">
                         <button id="out_log" onclick="clearmain(3)">Trở lại</button>
-                        <button id="loginn" onclick="clearmain(1)">Đăng nhập</button>
+                        <button id="loginn" onclick="xuly_login()">Đăng nhập</button>
                     </div>
                 </div>
             </div>
