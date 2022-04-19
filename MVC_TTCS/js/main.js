@@ -109,7 +109,7 @@
             modal_login.style.display = "none";
             btn_login.style.display = 'none';
             btn_sigin.style.display = 'none';
-            user_name.innerHTML="1101010"
+            user_name.innerHTML = TK_login.value;
             console.log(databased_pick);
             console.log('done')
 
