@@ -2,18 +2,18 @@
     ViewBag.Title = "Home Page";
 }
 @using MVC_TTCS.Models
-@model ModelTable
+@model gui_query
+
     <div class="body_mid_contact">
     <div class="header_contact">
         <p class="work_name">database</p>
-        <textarea cllass="edittext" data-lexical-text="true" id="SQL_input" value="tesst" style="font-size:25px;"></textarea>
+        @Html.TextAreaFor(m=>m.gui_Lenh_SQL)
+        @* cllass ="edittext" data-lexical-text="true" id="SQL_input" value="tesst" style="font-size:25px;"></textarea>*@
         <div class="head1">
             <button class="head2" onclick="laytext()">print report</button>
             <button class="head3" onclick="clear_all_colum()">clear all colum</button>
             <button class="head4" onclick="sinh_sql()">print</button>
         </div>
-
-
     </div>
     <div class="body_work">
         <div class="left_work">
@@ -313,18 +313,11 @@
         }
         console.log(table)
 
-        // add vao giao dien
-            data_name_add_work(table)
 
-            function data_name_add_work(table) {
-                var select_name = 'table';
-                var option_name = "column";
-                var class_parents = document.getElementsByClassName('table_column')[0];
-                // addoption(table, select_name, option_name, class_parents);
-                creat_table_database(table)
-            }
+
     // add table
-            function creat_table_database(table) {
+        creat_column_database(table)
+            function creat_column_database(table) {
 
                 for (var i = 0; i < table[0].length; i++) {
 
@@ -334,10 +327,10 @@
                     document.getElementById('table_add').insertAdjacentHTML('beforeend', text_table);
                     for (var j = 0; j < table[i + 1].length; j++) {
                         var column_name = table[i + 1][j];
-                        var text_column = '<li>\n<button class="column_pick" id="' + column_name + '.' + table_name + '">' + column_name + '</button>\n</li>';
+                        var text_column = '<li>\n<button class="column_pick" id="' + table_name + '.' + column_name + '">' + column_name + '</button>\n</li>';
                         document.getElementById(table_name + '_column_add').insertAdjacentHTML('beforeend', text_column);
-                        var add_id = document.getElementById(column_name + '.' + table_name);
-                        add_id.setAttribute('onclick', 'add_column_to_work(\'' + column_name + '.' + table_name + '\')');
+                        var add_id = document.getElementById(table_name + '.' + column_name);
+                        add_id.setAttribute('onclick', 'add_column_to_work(\'' + table_name + '.' + column_name+ '\')');
                     }
                 }
             }
@@ -345,12 +338,33 @@
 
             var table_pick_column = new Array();
             var tmp_pick_colum = 0;
+
+    //////
+            var input_select ="select";
+            var input_from= " from ";
+            var input_sql = document.getElementById("gui_Lenh_SQL");
+            
     //bat sukien onclick cuar button column
             function add_column_to_work(tmp_data) {
-
+                //
+                
                 var tmpstr_data = tmp_data.split(".")
-                var column_data = tmpstr_data[0];
-                var table_data = tmpstr_data[1];
+                var table_data = tmpstr_data[0];
+                var column_data = tmpstr_data[1];
+                // cong select
+                if (tmp_pick_colum <1)
+                {
+                    input_select += " " + table_data + '.' + column_data;
+                    input_from += " " + table_data;
+                }
+                else
+                {
+                    input_select += " , " + table_data + '.' + column_data;
+                    if (input_from.includes(table_data) == false)
+                        input_from += "," + table_data;
+                }
+                input_sql.value = input_select + input_from;
+
 
                 // add bang
                 tmp_pick_colum += 1;
@@ -360,16 +374,16 @@
                 del.style.background = "gray";
                 console.log(table_pick_column)
 
-                var row_add = '<div class="row" id="row_' + column_data + '.' + table_data + '">\n<div class="right_work_table_name" >' + table_data + '</div>\n<div class="right_work_column_name">' + column_data + '</div>\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="">fun</option>\n    <option value="' + column_data + '.' + table_data + '_count">count</option>\n    <option value="' + column_data + '.' + table_data + '_sum">sum</option>\n    <option value="' + column_data + '.' + table_data + '_average">average</option>\n    <option value="' + column_data + '.' + table_data + '_non">non</option>\n</select>\n<select class="right_work_sort" onchange="right_work_sort(this)" >\n    <option value="">sort</option>\n    <option value="' + column_data + '.' + table_data + '_sortB">12 1</option>\n    <option value="' + column_data + '.' + table_data + '_sortA">12 2</option>\n</select>\n<input type="text" id = "input_row_' + column_data + '.' + table_data + '">\n</div>'
+                var row_add = '<div class="row" id="row_' + table_data + '.' + column_data + '">\n<div class="right_work_table_name" >' + table_data + '</div>\n<div class="right_work_column_name">' + column_data + '</div>\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="">fun</option>\n    <option value="' + table_data + '.' + column_data + '_count">count</option>\n    <option value="' + table_data + '.' + column_data + '_sum">sum</option>\n    <option value="' + table_data + '.' + column_data + '_average">average</option>\n    <option value="' + table_data + '.' + column_data + '_non">non</option>\n</select>\n<select class="right_work_sort" onchange="right_work_sort(this)" >\n    <option value="">sort</option>\n    <option value="' + table_data + '.' + column_data + '_sortB">12 1</option>\n    <option value="' + table_data + '.' + column_data + '_sortA">12 2</option>\n</select>\n<input type="text" id = "input_row_' + table_data + '.' + column_data + '">\n</div>'
                 var htmlObj = document.getElementById('work_space_contact');
                 htmlObj.innerHTML = htmlObj.innerHTML + row_add;
 
 
                 //add button
-                var text_button_add = '<button id="button_' + column_data + '.' + table_data + '">clear</button>';
-                document.getElementById('row_' + column_data + '.' + table_data).insertAdjacentHTML('beforeend', text_button_add);
-                var del_id = document.getElementById('button_' + column_data + '.' + table_data);
-                del_id.setAttribute('onclick', 'deleterow(\'row_' + column_data + '.' + table_data + '\')')
+                var text_button_add = '<button id="button_' + table_data + '.' + column_data + '">clear</button>';
+                document.getElementById('row_' + table_data + '.' + column_data).insertAdjacentHTML('beforeend', text_button_add);
+                var del_id = document.getElementById('button_' + table_data + '.' + column_data);
+                del_id.setAttribute('onclick', 'deleterow(\'row_' + table_data + '.' + column_data + '\')')
             }
 
 
@@ -406,13 +420,12 @@
                 }
 
                 // update text sql
-                var a = document.getElementById("SQL_input");
+                var a = document.getElementById("gui_Lenh_SQL");
                 a.value = 'querty';
             }
     // bat sukien button sinh sql
 
             function sinh_sql() {
-                var input_sql = document.getElementById("SQL_input");
                 var input_tmp = 'input_row_';
                 var sum_sql = '';
                 for (let i = 0; i < table_pick_column.length; i++) {
@@ -426,11 +439,38 @@
             }
     // btn tmp
             function laytext() {
-                var a = document.getElementById("SQL_input");
+                var a = document.getElementById("gui_Lenh_SQL");
                 a.value += "abcdaedaaaaaaaddddddddddddddddddddd";
                 console.log(a.value)
             }
+        
+        
+            function right_work_fun(tmp_fun)
+            {
+                var fun = tmp_fun.value;
+                var ham;
+                var data_name;
+                var column_name;
 
+                fun = fun.replace('_', '.');
+                fun = fun.split('.');
+                data_name = fun[0];
+                column_name = fun[1];
+                ham = fun[2];
+                console.log(data_name + ' ' + column_name + ' ' + ham)
+            } function right_work_sort(tmp_fun) {
+                var fun = tmp_fun.value;
+                var ham;
+                var data_name;
+                var column_name;
+
+                fun = fun.replace('_', '.');
+                fun = fun.split('.');
+                data_name = fun[0];
+                column_name = fun[1];
+                ham = fun[2];
+                console.log(data_name + ' ' + column_name + ' ' + ham)
+            }
 
 
 </script>

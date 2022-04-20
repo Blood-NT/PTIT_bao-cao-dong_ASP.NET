@@ -6,7 +6,9 @@ using System.Data.SqlClient;
 using System.Web.Mvc;
 using MVC_TTCS.Models;
 using System.Data;
-
+using MVC_TTCS.report;
+using DevExpress.XtraReports.UI;
+using DevExpress.XtraPrinting;
 
 namespace MVC_TTCS.Controllers
 {
@@ -46,8 +48,128 @@ namespace MVC_TTCS.Controllers
             }
             ViewBag.getcolumn = Id_Column;
 
-            return View();
+            //report
+            XtraReport1 report = new XtraReport1();
+
+            return View(report);
         }
+
+        [HttpPost]
+        public ActionResult Index(gui_query QQ)
+        {
+            String strQuery = QQ.gui_Lenh_SQL;
+            SqlConnection con = connectt();
+            SqlCommand sqlcmd = new SqlCommand(strQuery, con);
+            sqlcmd.CommandType = CommandType.Text;
+
+            SqlDataAdapter Adpt = new SqlDataAdapter(strQuery, con);
+            try
+            {
+                sqlcmd.ExecuteReader();
+                return RedirectToAction("reportt", new { message = strQuery });
+            }
+            catch (SqlException ex)
+            {
+
+                ViewBag.Error = ex.Message;
+                con.Close();
+                return View("Index");
+            }
+
+
+        }
+        public ActionResult reportt(string message)
+        {
+            String qr = message;
+            
+            SqlConnection cnn = connectt();
+            DataSet dt = new DataSet();
+            SqlDataAdapter da = new SqlDataAdapter();
+            da.SelectCommand = new SqlCommand(qr, cnn);
+            da.Fill(dt);
+            XtraReport1 xrp = new XtraReport1();
+            xrp.DataSource = dt;
+            CreateBands(xrp);
+            InitializeBandsUsingXRTable(xrp);
+            return View(xrp);
+        }
+
+
+        //report creat
+
+        public void CreateBands(XtraReport1 report)
+        {
+            var detail = new DetailBand() { HeightF = 20 };
+            var pageHeader = new PageHeaderBand() { HeightF = 20 };
+            var reportFooter = new ReportFooterBand() { HeightF = 380 };
+            report.Bands.AddRange(new Band[] { detail, pageHeader, reportFooter });
+        }
+
+        public void InitializeBandsUsingXRTable(XtraReport1 report)
+        {
+            var ds = (report.DataSource as DataSet);
+            int colCount = ds.Tables[0].Columns.Count;
+            int colWidth = (report.PageWidth - (report.Margins.Left + report.Margins.Right)) / colCount;
+
+            // Create a table header.
+            var tableHeader = new XRTable();
+            tableHeader.Height = 20;
+            tableHeader.Width = (report.PageWidth - (report.Margins.Left + report.Margins.Right));
+
+            var headerRow = new XRTableRow();
+            headerRow.Width = tableHeader.Width;
+            tableHeader.Rows.Add(headerRow);
+
+            tableHeader.BeginInit();
+
+            // Create a table body.
+            var tableBody = new XRTable();
+            tableBody.Height = 20;
+            tableBody.Width = (report.PageWidth - (report.Margins.Left + report.Margins.Right));
+
+            var bodyRow = new XRTableRow();
+            bodyRow.Width = tableBody.Width;
+            tableBody.Rows.Add(bodyRow);
+            tableBody.EvenStyleName = "EvenStyle";
+            tableBody.OddStyleName = "OddStyle";
+
+            tableBody.BeginInit();
+
+            // Initialize table header and body cells.
+            for (int i = 0; i < colCount; i++)
+            {
+                var headerCell = new XRTableCell();
+                headerCell.Width = colWidth;
+                headerCell.Text = ds.Tables[0].Columns[i].Caption;
+
+                var bodyCell = new XRTableCell();
+                bodyCell.Width = colWidth;
+                bodyCell.DataBindings.Add("Text", null, ds.Tables[0].Columns[i].Caption);
+
+                if (i == 0)
+                {
+                    headerCell.Borders = BorderSide.Left | BorderSide.Top | BorderSide.Bottom;
+                    bodyCell.Borders = BorderSide.Left | BorderSide.Top | BorderSide.Bottom;
+                }
+                else
+                {
+                    headerCell.Borders = BorderSide.All;
+                    bodyCell.Borders = BorderSide.All;
+                }
+
+                headerRow.Cells.Add(headerCell);
+                bodyRow.Cells.Add(bodyCell);
+            }
+
+            tableHeader.EndInit();
+            tableBody.EndInit();
+
+            // Add the table header and body to the corresponding report bands.
+            report.Bands[BandKind.PageHeader].Controls.Add(tableHeader);
+            report.Bands[BandKind.Detail].Controls.Add(tableBody);
+        }
+
+
         //public void connectt()
         //{
         //    SqlConnection con = new SqlConnection();
@@ -82,7 +204,7 @@ namespace MVC_TTCS.Controllers
         public SqlConnection connectt()
         {
             SqlConnection con = new SqlConnection();
-            String tmp_connect = "Data Source=.;Initial Catalog=QLVT;Integrated Security=True";
+            String tmp_connect = "Data Source=.;Initial Catalog=QLVT;User ID=sa;Password=123";
             con.ConnectionString = tmp_connect;
             return con;
         }
