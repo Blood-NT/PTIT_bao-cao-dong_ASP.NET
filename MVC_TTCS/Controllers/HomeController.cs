@@ -10,29 +10,43 @@ using System.Data;
 
 namespace MVC_TTCS.Controllers
 {
+
     public class HomeController : Controller
     {
+        String Id_Table = "table";
+        String Id_Column = "column";
         public ActionResult Index()
         {
             DataTable table = getdata("select object_id as Id, name as Name from sys.tables where name <> 'sysdiagrams' and is_ms_shipped <> 1");
             DataTable colunm = getdata("SELECT C.name AS Name, C.object_id as SubId FROM sys.objects AS T JOIN sys.columns AS C ON T.object_id = C.object_id WHERE T.type_desc = 'USER_TABLE' and T.is_ms_shipped <> 1 and C.name <> 'rowguid' and T.name <> 'sysdiagrams'");
-            List<Models.ModelTable> tables = new List<ModelTable>();
-            List<Models.ModelColunm> columns = new List<ModelColunm>();
-           // Models.ModelTable mdtable = new ModelTable();
             if (table != null && table.Rows.Count > 0)
             {
                 foreach (DataRow row in table.Rows)
                 {
-                    mdtable.tables.Add(row["Name"].ToString());
-                    mdtable.id.Add(Int32.Parse(row["Id"].ToString()));
-                    //tables.Add();
-                    //id = Int32.Parse(row["Id"].ToString())
+
+                    Id_Table += '_';
+                    Id_Table += Int32.Parse(row["Id"].ToString());
+                    Id_Table += '.';
+                    Id_Table += row["name"].ToString();
+                }
+            };
+            ViewBag.gettable = Id_Table;
+
+
+            if (colunm != null && colunm.Rows.Count > 0)
+            {
+                foreach (DataRow row in colunm.Rows)
+                {
+
+                    Id_Column += '_';
+                    Id_Column += Int32.Parse(row["SubId"].ToString());
+                    Id_Column += '.';
+                    Id_Column += row["name"].ToString();
                 }
             }
+            ViewBag.getcolumn = Id_Column;
 
-            
-            Models.ModelTable md = new ModelTable();      
-            return View(md);
+            return View();
         }
         //public void connectt()
         //{
