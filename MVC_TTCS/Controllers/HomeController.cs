@@ -49,9 +49,8 @@ namespace MVC_TTCS.Controllers
             ViewBag.getcolumn = Id_Column;
 
             //report
-            XtraReport1 report = new XtraReport1();
 
-            return View(report);
+            return View();
         }
 
         [HttpPost]
@@ -61,7 +60,7 @@ namespace MVC_TTCS.Controllers
             SqlConnection con = connectt();
             SqlCommand sqlcmd = new SqlCommand(strQuery, con);
             sqlcmd.CommandType = CommandType.Text;
-
+            con.Open();
             SqlDataAdapter Adpt = new SqlDataAdapter(strQuery, con);
             try
             {
@@ -81,7 +80,7 @@ namespace MVC_TTCS.Controllers
         public ActionResult reportt(string message)
         {
             String qr = message;
-            
+
             SqlConnection cnn = connectt();
             DataSet dt = new DataSet();
             SqlDataAdapter da = new SqlDataAdapter();

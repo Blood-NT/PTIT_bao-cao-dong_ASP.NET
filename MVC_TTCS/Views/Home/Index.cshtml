@@ -3,14 +3,17 @@
 }
 @using MVC_TTCS.Models
 @model gui_query
+@using (Html.BeginForm("Index", "Home", FormMethod.Post)) {
 
-    <div class="body_mid_contact">
+ <div class="body_mid_contact">
     <div class="header_contact">
+       
         <p class="work_name">database</p>
-        @Html.TextAreaFor(m=>m.gui_Lenh_SQL)
+
+        @Html.TextAreaFor(m => m.gui_Lenh_SQL)
         @* cllass ="edittext" data-lexical-text="true" id="SQL_input" value="tesst" style="font-size:25px;"></textarea>*@
         <div class="head1">
-            <button class="head2" onclick="laytext()">print report</button>
+            <button class="head2" type="submit">print report</button>
             <button class="head3" onclick="clear_all_colum()">clear all colum</button>
             <button class="head4" onclick="sinh_sql()">print</button>
         </div>
@@ -213,7 +216,7 @@
         align-items: center;
         margin-top: 10px;
     }
-
+ 
         .right_work_table_name,
         .right_work_column_name,
         .right_work_fun,
@@ -474,6 +477,7 @@
 
 
 </script>
+        }
 
           
        
