@@ -3,6 +3,7 @@
 }
 @using MVC_TTCS.Models
 @model gui_query
+
 @using (Html.BeginForm("Index", "Home", FormMethod.Post)) {
 
  <div class="body_mid_contact">
@@ -14,8 +15,6 @@
         @* cllass ="edittext" data-lexical-text="true" id="SQL_input" value="tesst" style="font-size:25px;"></textarea>*@
         <div class="head1">
             <button class="head2" type="submit">print report</button>
-            <button class="head3" onclick="clear_all_colum()">clear all colum</button>
-            <button class="head4" onclick="sinh_sql()">print</button>
         </div>
     </div>
     <div class="body_work">
