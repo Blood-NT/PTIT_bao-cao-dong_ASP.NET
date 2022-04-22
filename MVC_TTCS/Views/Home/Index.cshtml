@@ -54,6 +54,7 @@
 
 <input id="gettable" value="@ViewBag.gettable" style="display:none;">
 <input id="getcolumn" value="@ViewBag.getcolumn" style="display:none">
+<input id="gettype" value="@ViewBag.gettype" style="display:none">
 <style>
     :root {
         --textHead: #000000;
@@ -314,15 +315,25 @@
         //get database (table and column)
     var gettable = document.getElementById('gettable')
     var tabletmp = gettable.value
-    console.log(tabletmp)
+
     var getcolumn = document.getElementById('getcolumn')
     var columntmp = getcolumn.value
-    console.log(columntmp)
+
+    var gettable = document.getElementById('gettype')
+    var typetmp= gettype.value
+    console.log(typetmp)
+
     var arr_table=tabletmp.split('_');
     var arr_column = columntmp.split('_');
-    console.log(arr_table)
-    console.log(arr_column)
-        
+    var tmp_arr = typetmp.split('_');
+
+    var arr_type = new Array();
+    for (var i = 1; i < tmp_arr.length; i++) {
+        var arr = tmp_arr[i].split('-');
+        arr_type.push(arr);
+    }
+    console.log(arr_type);
+
 
 
     var tmp1 = new Array();
@@ -342,14 +353,10 @@
                 var column_tmp_check = arr_column[j].split('.')
                 if (column_tmp_check[0] == tmp[0]) {
                     tmp2.push(column_tmp_check[1])
-                    
                 }
             }
             table.push(tmp2);
         }
-        console.log(table)
-
-
 
     // add table
         creat_column_database(table)
@@ -510,6 +517,19 @@
                 console.log(data_name + ' ' + column_name + ' ' + ham)
             }
 
+    //tim type
+            function tracuu_type_colummn(tmp_type)
+            {
+                var note = '';
+                for (var i = 0; i < arr_type.length; i++)
+                {
+                    if (tmp_type == arr_type[i][0])
+                    {
+                        note = arr_type[i][1]
+                        return note;
+                    }
+                }
+            }
 
 </script>
      

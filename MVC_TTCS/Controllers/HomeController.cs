@@ -17,10 +17,12 @@ namespace MVC_TTCS.Controllers
     {
         String Id_Table = "table";
         String Id_Column = "column";
+        String Type_column = "type";
         public ActionResult Index()
         {
             DataTable table = getdata("select object_id as Id, name as Name from sys.tables where name <> 'sysdiagrams' and is_ms_shipped <> 1");
             DataTable colunm = getdata("SELECT C.name AS Name, C.object_id as SubId FROM sys.objects AS T JOIN sys.columns AS C ON T.object_id = C.object_id WHERE T.type_desc = 'USER_TABLE' and T.is_ms_shipped <> 1 and C.name <> 'rowguid' and T.name <> 'sysdiagrams'");
+            DataTable type = getdata("SELECT COLUMN_NAME, TABLE_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME in (select name from sys.tables where name <> 'sysdiagrams' and is_ms_shipped <> 1)");
             if (table != null && table.Rows.Count > 0)
             {
                 foreach (DataRow row in table.Rows)
@@ -33,6 +35,25 @@ namespace MVC_TTCS.Controllers
                 }
             };
             ViewBag.gettable = Id_Table;
+
+
+            if (type != null && type.Rows.Count > 0)
+            {
+                foreach (DataRow row in type.Rows)
+                {
+
+                    Type_column += '_';
+                    Type_column += row["TABLE_NAME"].ToString();
+                    Type_column += '.';
+                    Type_column += row["COLUMN_NAME"].ToString();
+                    Type_column += '-';
+                    Type_column += row["DATA_TYPE"].ToString();
+
+                }
+            };
+            ViewBag.gettype = Type_column;
+
+
 
 
             if (colunm != null && colunm.Rows.Count > 0)
