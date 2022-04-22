@@ -152,6 +152,7 @@
 
     .body_work {
         display: flex;
+        margin-bottom: 200px
     }
 
     .left_work,
@@ -175,7 +176,9 @@
     }
 
     #work_space_contact {
-        margin: 30px 0 0 30px;
+        margin-top: 30px;
+        margin-bottom: 50px;
+        margin-left: 20px;
     }
 
 
@@ -380,6 +383,7 @@
     //
 
             var table_pick_column = new Array();
+            var arr_groupby = new Array();
             var tmp_pick_colum = 0;
 
     //////
@@ -412,14 +416,21 @@
                 // add bang
                 tmp_pick_colum += 1;
                 table_pick_column.push(tmp_data);
+                arr_groupby.push(tmp.data);
                 let del = document.getElementById(tmp_data);
                 del.disabled = true;
                 del.style.background = "gray";
                 console.log(table_pick_column)
 
-                var row_add = '<div class="row" id="row_' + table_data + '.' + column_data + '">\n<div class="right_work_table_name" >' + table_data + '</div>\n<div class="right_work_column_name">' + column_data + '</div>\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="">fun</option>\n    <option value="' + table_data + '.' + column_data + '_count">count</option>\n    <option value="' + table_data + '.' + column_data + '_sum">sum</option>\n    <option value="' + table_data + '.' + column_data + '_average">average</option>\n    <option value="' + table_data + '.' + column_data + '_non">non</option>\n</select>\n<select class="right_work_sort" onchange="right_work_sort(this)" >\n    <option value="">sort</option>\n    <option value="' + table_data + '.' + column_data + '_sortB">12 1</option>\n    <option value="' + table_data + '.' + column_data + '_sortA">12 2</option>\n</select>\n<input type="text" id = "input_row_' + table_data + '.' + column_data + '">\n</div>'
+                var row_add = '<div class="row" id="row_' + table_data + '.' + column_data + '">\n<div class="right_work_table_name" >' + table_data + '</div>\n<div class="right_work_column_name" id="add_select_'+table_data + '.' + column_data+'">' + column_data + '</div>\n</select>\n<select class="right_work_sort" onchange="right_work_sort(this)" >\n    <option value="">sort</option>\n    <option value="' + table_data + '.' + column_data + '_sortB">12 1</option>\n    <option value="' + table_data + '.' + column_data + '_sortA">12 2</option>\n</select>\n<input type="text" id = "input_row_' + table_data + '.' + column_data + '">\n</div>'
                 var htmlObj = document.getElementById('work_space_contact');
                 htmlObj.innerHTML = htmlObj.innerHTML + row_add;
+                if (tracuu_type_colummn(table_data + '.' + column_data) == "int" || tracuu_type_colummn(table_data + '.' + column_data) == "float") {
+                    var add_tmp_select_fun = '\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="">fun</option>\n    <option value="' + table_data + '.' + column_data + '_count">count</option>\n    <option value="' + table_data + '.' + column_data + '_sum">sum</option>\n    <option value="' + table_data + '.' + column_data + '_average">average</option>\n    <option value="' + table_data + '.' + column_data + '_non">non</option>'
+
+                    document.getElementById("add_select_" + table_data + '.' + column_data).insertAdjacentHTML('afterend', add_tmp_select_fun);
+
+                }
 
 
                 //add button
@@ -496,7 +507,6 @@
                 var ham;
                 var data_name;
                 var column_name;
-
                 fun = fun.replace('_', '.');
                 fun = fun.split('.');
                 data_name = fun[0];
