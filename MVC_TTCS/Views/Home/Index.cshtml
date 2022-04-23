@@ -388,7 +388,8 @@
 
     //////
             var input_select ="select";
-            var input_from= " from ";
+            var input_from = " from ";
+            var input_groupby = 'group by ';
             var input_sql = document.getElementById("gui_Lenh_SQL");
             
     //bat sukien onclick cuar button column
@@ -399,24 +400,23 @@
                 var table_data = tmpstr_data[0];
                 var column_data = tmpstr_data[1];
                 // cong select
-                if (tmp_pick_colum <1)
-                {
-                    input_select += " " + table_data + '.' + column_data;
-                    input_from += " " + table_data;
-                }
-                else
-                {
-                    input_select += " , " + table_data + '.' + column_data;
-                    if (input_from.includes(table_data) == false)
-                        input_from += "," + table_data;
-                }
-                input_sql.value = input_select + input_from;
+                //if (tmp_pick_colum <1)
+                //{
+                //    input_select += " " + table_data + '.' + column_data;
+                //    input_from += " " + table_data;
+                //}
+                //else
+                //{
+                //    input_select += " , " + table_data + '.' + column_data;
+                //    if (input_from.includes(table_data) == false)
+                //        input_from += "," + table_data;
+                //}
+                //input_sql.value = input_select + input_from;
 
 
                 // add bang
                 tmp_pick_colum += 1;
                 table_pick_column.push(tmp_data);
-                arr_groupby.push(tmp.data);
                 let del = document.getElementById(tmp_data);
                 del.disabled = true;
                 del.style.background = "gray";
@@ -426,7 +426,7 @@
                 var htmlObj = document.getElementById('work_space_contact');
                 htmlObj.innerHTML = htmlObj.innerHTML + row_add;
                 if (tracuu_type_colummn(table_data + '.' + column_data) == "int" || tracuu_type_colummn(table_data + '.' + column_data) == "float") {
-                    var add_tmp_select_fun = '\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="">fun</option>\n    <option value="' + table_data + '.' + column_data + '_count">count</option>\n    <option value="' + table_data + '.' + column_data + '_sum">sum</option>\n    <option value="' + table_data + '.' + column_data + '_average">average</option>\n    <option value="' + table_data + '.' + column_data + '_non">non</option>'
+                    var add_tmp_select_fun = '\n<select class="right_work_fun"  onchange="right_work_fun(this)">\n    <option value="' + table_data + '.' + column_data + '_none">none</option>\n    <option value="' + table_data + '.' + column_data + '_sum">sum</option>\n    <option value="' + table_data + '.' + column_data + '_count">COUNT</option>\n    <option value="' + table_data + '.' + column_data + '_min">MIN</option>\n    <option value="' + table_data + '.' + column_data + '_max">MAX</option>\n    <option value="' + table_data + '.' + column_data + '_avg">AVG</option>'
 
                     document.getElementById("add_select_" + table_data + '.' + column_data).insertAdjacentHTML('afterend', add_tmp_select_fun);
 
@@ -438,6 +438,12 @@
                 document.getElementById('row_' + table_data + '.' + column_data).insertAdjacentHTML('beforeend', text_button_add);
                 var del_id = document.getElementById('button_' + table_data + '.' + column_data);
                 del_id.setAttribute('onclick', 'deleterow(\'row_' + table_data + '.' + column_data + '\')')
+
+
+                if (arr_groupby.includes(table_data + '.' + column_data) == false) {
+                    arr_groupby.push(table_data + '.' + column_data);
+                }
+                sinh_sql()
             }
 
 
@@ -454,12 +460,30 @@
 
                 restore.disabled = false;
                 restore.style.background = "#a9c5eb";
+                if (dem_sum > 0)
+                    dem_sum--;
+
+                if (arr_sum.includes(del) == true)
+                    arr_sum.splice(arr_sum.indexOf(del), 1);
+                else if (arr_count.includes(del) == true)
+                    arr_count.splice(arr_count.indexOf(del), 1);
+                else if (arr_min.includes(del) == true)
+                    arr_min.splice(arr_min.indexOf(del), 1);
+                else if (arr_sum.includes(del) == true)
+                    arr_max.splice(arr_max.indexOf(del), 1);
+                else if (arr_average.includes(del) == true)
+                    arr_average.splice(arr_average.indexOf(del), 1);
+                else
+                    dem_sum++;
+
+                arr_groupby.splice(arr_groupby.indexOf(del), 1);
 
                 sinh_sql();
             }
     // bat su kien onclick nut clear all column
             function clear_all_colum() {
                 input_select = "select";
+                input_groupby = 'group by ';
                 input_from = " from ";
                 var tmp = table_pick_column.length
                 for (let i = 0; i < tmp; i++) {
@@ -475,6 +499,16 @@
                     restore.style.background = "#a9c5eb";
                 }
 
+                //
+                arr_groupby.length = [];
+                arr_sum.length = [];
+                arr_count.length = [];
+                arr_min.length = [];
+                arr_max.length = [];
+                arr_average.length = [];
+
+                //
+
                 // update text sql
                 var a = document.getElementById("gui_Lenh_SQL");
                 a.value = '';
@@ -482,25 +516,82 @@
     // bat sukien button sinh sql
 
             function sinh_sql() {
+                input_select = "select ";
+                input_from = " from ";
+                input_groupby = ' group by ';
+
                 var input_tmp = 'input_row_';
                 var sum_sql = '';
-                for (let i = 0; i < table_pick_column.length; i++) {
-                    var sql_input_id = input_tmp + table_pick_column[i];
-                    var sql_input = document.getElementById(sql_input_id);
-                    sum_sql += sql_input.value + '      '
+                for (var i = 0; i < table_pick_column.length; i++) {
+                    console.log(table_pick_column[i])
+                    var tb_arr_tmp = table_pick_column[i].split('.');
+
+                    if (i>0)
+                    {
+                        input_select += ', ';
+
+                    }
+                    if (i < 1)
+                    {
+                        input_from += " " + tb_arr_tmp[0];
+                    }
+                    if (arr_groupby.includes(table_pick_column[i]) == true) {
+                        input_select += table_pick_column[i];
+
+
+                    }
+                    else
+                    {
+                        if (arr_sum.includes(table_pick_column[i]) == true) {
+                            input_select += 'SUM(' + table_pick_column[i] + ')';
+                        }
+                        else if (arr_count.includes(table_pick_column[i]) == true) {
+                            input_select += 'COUNT(' + table_pick_column[i] + ')';
+
+                        }
+                        else if (arr_min.includes(table_pick_column[i]) == true) {
+                               
+                            input_select += 'MIN(' + table_pick_column[i] + ')';
+                        }
+                        else if (arr_max.includes(table_pick_column[i]) == true) {
+                            input_select += 'MAX(' + table_pick_column[i] + ')';
+
+                        }
+                        else if (arr_average.includes(table_pick_column[i]) == true) {
+                                
+                            input_select += 'AVG(' + table_pick_column[i] + ')';
+                        }
+                    }
+                    if (input_from.includes(tb_arr_tmp[0]) == false && i>0)
+                        input_from += "," + tb_arr_tmp[0];
+                }
+                input_groupby += arr_groupby[0];
+
+                for (var i = 1; i < arr_groupby.length; i++)
+                {
+                    input_groupby += ',' +arr_groupby[i];
                 }
 
+                if (dem_sum == 0)
+                {
+                    sum_sql = input_select + input_from;
+                }
+                else {
+                    sum_sql = input_select + input_from + input_groupby;
+
+                }
                 input_sql.value = sum_sql;
 
             }
-    // btn tmp
-            function laytext() {
-                var a = document.getElementById("gui_Lenh_SQL");
-                a.value += "abcdaedaaaaaaaddddddddddddddddddddd";
-                console.log(a.value)
-            }
-        
-        
+
+
+            var arr_sum = new Array();
+            var arr_count = new Array();
+            var arr_min = new Array();
+            var arr_max = new Array();
+            var arr_average = new Array();
+            var dem_sum = 0;
+
             function right_work_fun(tmp_fun)
             {
                 var fun = tmp_fun.value;
@@ -512,8 +603,79 @@
                 data_name = fun[0];
                 column_name = fun[1];
                 ham = fun[2];
-                console.log(data_name + ' ' + column_name + ' ' + ham)
-            } function right_work_sort(tmp_fun) {
+                id_work = data_name + '.' + column_name;
+                
+               
+                if (ham=='sum')
+                {
+                    arr_sum.push(id_work);
+                    dem_sum++;
+                    if (arr_groupby.includes(id_work) == true)
+                        arr_groupby.splice(arr_groupby.indexOf(id_work), 1);
+                }
+                else if (ham == 'count') {
+                    arr_count.push(id_work);
+                    dem_sum++;
+                    if (arr_groupby.includes(id_work) == true)
+                        arr_groupby.splice(arr_groupby.indexOf(id_work), 1);
+                }
+                else if (ham == 'min') {
+                    arr_min.push(id_work);
+                    dem_sum;
+                    if (arr_groupby.includes(id_work) == true)
+                        arr_groupby.splice(arr_groupby.indexOf(id_work), 1);
+                }
+                else if (ham == 'max') {
+                    arr_max.push(id_work);
+                    dem_sum++;
+                    if (arr_groupby.includes(id_work) == true)
+                        arr_groupby.splice(arr_groupby.indexOf(id_work), 1);
+                }
+                else if (ham == 'avg') {
+                    arr_average.push(id_work);
+                    dem_sum++;
+                    if (arr_groupby.includes(id_work) == true)
+                        arr_groupby.splice(arr_groupby.indexOf(id_work), 1);
+                }
+                else if (ham == 'none') {
+                    arr_groupby.push(id_work);
+                    if (arr_sum.includes(id_work) == true)
+                    {
+                        arr_sum.splice(arr_sum.indexOf(id_work), 1);
+                        dem_sum--;
+                    }
+                    else if (arr_count.includes(id_work) == true)
+                    {
+                        arr_count.splice(arr_count.indexOf(id_work), 1);
+                        dem_sum--;
+                    }
+                    else if (arr_min.includes(id_work) == true)
+                    {
+                        arr_min.splice(arr_min.indexOf(id_work), 1);
+                        dem_sum--;
+                    }
+                    else if (arr_max.includes(id_work) == true)
+                    {
+                        arr_max.splice(arr_max.indexOf(id_work), 1);
+                        dem_sum--;
+                    }
+                    else if (arr_average.includes(id_work) == true)
+                    {
+                        arr_average.splice(arr_average.indexOf(id_work), 1);
+                        dem_sum--
+                    }
+
+                }
+
+
+
+                sinh_sql();
+
+
+            }
+
+
+            function right_work_sort(tmp_fun) {
                 var fun = tmp_fun.value;
                 var ham;
                 var data_name;
