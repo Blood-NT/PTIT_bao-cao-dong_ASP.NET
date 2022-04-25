@@ -9,6 +9,7 @@ using System.Data;
 using MVC_TTCS.report;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraPrinting;
+using System.Drawing;
 
 namespace MVC_TTCS.Controllers
 {
@@ -111,6 +112,8 @@ namespace MVC_TTCS.Controllers
             xrp.DataSource = dt;
             CreateBands(xrp);
             InitializeBandsUsingXRTable(xrp);
+            cnn.Close();
+
             return View(xrp);
         }
 
@@ -139,7 +142,8 @@ namespace MVC_TTCS.Controllers
             var headerRow = new XRTableRow();
             headerRow.Width = tableHeader.Width;
             tableHeader.Rows.Add(headerRow);
-
+            headerRow.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
+            headerRow.Font = new Font("TimeNewRoman",14,FontStyle.Bold,GraphicsUnit.Pixel);
             tableHeader.BeginInit();
 
             // Create a table body.
