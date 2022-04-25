@@ -17,11 +17,11 @@
         <div class="right_work">
             <div id="work_space_contact">
                 <div class="row" id="row1">
-                    <div class="right_work_table_name" style="background: #a9c5eb;">table</div>
-                    <div class="right_work_column_name" style="background: #a9c5eb;">column</div>
-                    <div class="right_work_fun" style="background: #a9c5eb;">fun</div>
-                    <div class="right_work_sort" style="background: #a9c5eb;">sort</div>
-                    <div class="tmp_input " style="background: #a9c5eb;">input sherr</div>
+                    <div class="right_work_table_name" style="background: #a9c5eb;">TABLE</div>
+                    <div class="right_work_column_name" style="background: #a9c5eb;">COLUMN</div>
+                    <div class="right_work_fun" style="background: #a9c5eb;">FUN</div>
+                    <div class="right_work_sort" style="background: #a9c5eb;">SORT</div>
+                    <div class="tmp_input " style="background: #a9c5eb;">INPUT WHERE</div>
                 </div>
             </div>
            
@@ -42,7 +42,7 @@
 
         <div class="header_contact">
 
-            <p class="work_name">database</p>
+            @*<p class="work_name">database</p>*@
 
             @Html.TextAreaFor(m => m.gui_Lenh_SQL)
             @* cllass ="edittext" data-lexical-text="true" id="SQL_input" value="tesst" style="font-size:25px;"></textarea>*@
@@ -55,6 +55,7 @@
 <input id="gettable" value="@ViewBag.gettable" style="display:none;">
 <input id="getcolumn" value="@ViewBag.getcolumn" style="display:none">
 <input id="gettype" value="@ViewBag.gettype" style="display:none">
+<input id="geterr" value="@ViewBag.Error" style="display:none" >
 <style>
     :root {
         --textHead: #000000;
@@ -106,15 +107,15 @@
 
     textarea {
         clear: left;
-        min-width: 60%;
-        max-width: 60%;
+        min-width: 85%;
+        max-width: 85%;
         min-height: 150px;
         max-height: 150px;
     }
 
     .head1 {
         height: 150px;
-        margin-right: 20px;
+        margin-right: 85px;
     }
 
     
@@ -251,6 +252,7 @@
         height: 50px;
         /* border: 1px solid rgb(2, 46, 46); */
         align-items: center;
+        text-align:center;
         margin-top: 10px;
     }
  
@@ -261,6 +263,8 @@
         .row button,
         .right_work_fun option,
         .tmp_input {
+            align-items:center;
+            text-align:center;
             margin-left: 10px;
             height: 90%;
             font-size: 25px;
@@ -307,13 +311,20 @@
     .tmp_input:hover {
         cursor: pointer;
     }
-
+    textarea{
+        font-size:23px;
+    }
 </style>
 <script type="text/javascript">
 
     //getdatabase
     var table = new Array();
         
+    var get_arr = document.getElementById('geterr')
+    var tmperr = get_arr.value
+    if (tmperr.length>=1)
+        alert("ERROR \n" + tmperr+"\n vui lòng reload(ctrl + shift + R hoặc F5) lại trang")
+    get_arr.value=''
 
         //get database (table and column)
     var gettable = document.getElementById('gettable')
@@ -390,6 +401,36 @@
             var input_groupby = 'group by ';
             var input_sql = document.getElementById("gui_Lenh_SQL");
             
+
+
+            function add_groupby_ok()
+            {
+                arr_groupby.length = [];
+
+                for (var i=0; i<table_pick_column.length;i++)
+                {
+                    if (arr_sum.includes(table_pick_column[i]) == true)
+                    {
+                        continue;
+                    }
+                    if (arr_count.includes(table_pick_column[i]) == true)
+                    {
+                        continue;
+                    }
+                    if (arr_min.includes(table_pick_column[i]) == true)
+                    {
+                        continue;
+                    }
+                    if (arr_max.includes(table_pick_column[i]) == true)
+                    {
+                        continue;
+                    }
+                    if (arr_average.includes(table_pick_column[i]) == true) {
+                        continue;
+                    }
+                    arr_groupby.push(table_pick_column[i]);
+                }
+            }
     //bat sukien onclick cuar button column
             function add_column_to_work(tmp_data) {
                 //
@@ -423,9 +464,7 @@
                 del_id.setAttribute('onclick', 'deleterow(\'row_' + table_data + '.' + column_data + '\')')
 
 
-                if (arr_groupby.includes(table_data + '.' + column_data) == false) {
-                    arr_groupby.push(table_data + '.' + column_data);
-                }
+
                 sinh_sql()
             }
 
@@ -444,13 +483,6 @@
                 restore.style.background = "#a9c5eb";
                 dem_sum--;
 
-
-                console.log(table_pick_column)
-                console.log(arr_sum)
-                console.log(arr_count)
-                console.log(arr_min)
-                console.log(arr_max)
-                console.log(arr_average)
                 if (arr_sum.includes(del) == true)
                     arr_sum.splice(arr_sum.indexOf(del), 1);
                 else if (arr_count.includes(del) == true)
@@ -463,16 +495,9 @@
                     arr_average.splice(arr_average.indexOf(del), 1);
                 else
                     dem_sum++;
-                console.log(table_pick_column)
-                console.log(arr_sum)
-                console.log(arr_count)
-                console.log(arr_min)
-                console.log(arr_max)
-                console.log(arr_average)
-                console.log(dem_sum)
 
 
-                arr_groupby.splice(arr_groupby.indexOf(del), 1);
+
 
                 if (arr_desc_asc.length!=0)
                 {
@@ -498,7 +523,7 @@
                 }
 
                 
-
+                add_groupby_ok();
                 sinh_sql();
             }
     // bat su kien onclick nut clear all column
@@ -546,6 +571,7 @@
                 var sum_sql = '';
                 var arr_input = new Array();
 
+                add_groupby_ok();
 
                 for (var i = 0; i < table_pick_column.length; i++) {
                     var tmp_table_column_split = table_pick_column[i]
@@ -666,7 +692,7 @@
                 }
                 var tmp_input_str = arr_input.join(',');
                 input_input += " " + tmp_input_str
-                if (arr_groupby.length == 0)
+                if (arr_sum.length+arr_count.length+arr_min.length+arr_max.length+arr_average.length ==0)
                     input_groupby = "";
 
      

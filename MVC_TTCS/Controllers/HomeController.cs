@@ -85,7 +85,7 @@ namespace MVC_TTCS.Controllers
             SqlDataAdapter Adpt = new SqlDataAdapter(strQuery, con);
             try
             {
-                sqlcmd.ExecuteReader();
+                sqlcmd.ExecuteNonQuery();
                 return RedirectToAction("reportt", new { message = strQuery });
             }
             catch (SqlException ex)
