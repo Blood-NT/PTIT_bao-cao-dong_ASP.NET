@@ -1,4 +1,4 @@
-# PTIT_bao-cao-dong_ASP.Net
+# PTIT_bao-cao-dong_ASP.NET
 
 ## Yêu cầu
     - Tạo một website thân thiện với người dùng. dễ dàng thao tác sử dụng với các thao tác click
